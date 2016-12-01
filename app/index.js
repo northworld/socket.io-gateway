@@ -9,12 +9,41 @@ var clients = null;
 var server = null;
 var io = null;
 
+function patchServer(server) {
+
+    var sockets = {};
+    var nextSocketId = 1;
+
+    server.on('connection', function(socket) {
+
+        var socketId = nextSocketId++;
+        sockets[socketId] = socket;
+
+        socket.on('close', function() {
+            delete sockets[socketId];
+        });
+
+    });
+
+    server.destroy = function(callback) {
+
+        this.close(callback);
+        for(var socketId in sockets) {
+            sockets[socketId].destroy();
+        }
+
+    };
+
+}
+
 connection.on('connect', function() {
 
     console.log("Connected to app server, starting socket.io...");
 
     // start up the socket io server
     server = http.createServer();
+    patchServer(server);
+
     io = socketIo(server);
     clients = {};
 
@@ -74,15 +103,15 @@ connection.on('message', function(info) {
 
 });
 
+connection.on('error', console.log.bind(console));
+
 connection.on('disconnect', function() {
 
     console.log("Disconnected from app server, shutting down socket.io...");
 
-    // shutdown the socket io server
-    server.close();
-    for(var id in clients) {
-        clients[id].destroy();
-    }
+    server.destroy(function() {
+        console.log("Closed socket.io server.");
+    });
 
     server = null;
     io = null;

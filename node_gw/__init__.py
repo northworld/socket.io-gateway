@@ -4,6 +4,8 @@ import json
 
 import threading
 
+__version__ = '0.0.1'
+
 class NodeGateway(object):
 
     def __init__(self, host='127.0.0.1', port=5005, handler=print):

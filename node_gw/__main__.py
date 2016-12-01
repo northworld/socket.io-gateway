@@ -1,6 +1,4 @@
-from __init__ import NodeGateway
+from node_gw import NodeGateway
 
 gw = NodeGateway()
 gw.serve()
-
-gw.thread.join()

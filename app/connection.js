@@ -64,7 +64,7 @@ class Connection extends EventEmitter {
     _handleError(err) {
 
         if(err.code != 'ECONNREFUSED' && err.code != 'ECONNRESET') {
-            console.log(err);
+            super.emit('error', err);
         }
 
     }
@@ -75,19 +75,25 @@ class Connection extends EventEmitter {
 
         if(this.buffer.length >= 4) {
 
-            var dataLength = this.buffer.readInt32LE(0);
+            var dataLength = this.buffer.readUInt32LE(0);
 
             if(this.buffer.length >= 4 + dataLength) {
 
                 var jstr = this.buffer.toString('utf8', 4, 4 + dataLength);
-                var j = JSON.parse(jstr);
                 this.buffer = this.buffer.slice(4 + dataLength);
 
-                super.emit('message', j);
+                try {
+                    var j = JSON.parse(jstr);
+                    super.emit('message', j);
+                }
+                catch(err) {
+                    super.emit('error', err);
+                }
 
             }
 
         }
+
     }
 
     _handleCloseConnection() {
