@@ -3,7 +3,7 @@ var socketIo = require("socket.io");
 var uuid = require("node-uuid");
 
 var Connection = require("./connection");
-var connection = new Connection('0.0.0.0', process.env.REALTIME_GATEWAY_PORT);
+var connection = new Connection(process.env.REALTIME_GATEWAY_HOST, process.env.REALTIME_GATEWAY_PORT);
 
 var clients = null;
 var server = null;
