@@ -10,15 +10,13 @@ build:
   script:
     - docker build --pull -t realtime_gateway .
 
-build and push non-master:
+push branches:
   stage: push
-  except:
-    - master
   script:
     - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
 
-build and push tags:
+push tags:
   stage: push
   only:
     - tags
