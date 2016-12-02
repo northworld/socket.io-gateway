@@ -1,29 +1,28 @@
-image: zoomeranalytics/docker-ci
-
-services:
-  - docker:dind
-
 stages:
-  - build and push
+  - build
+  - push
 
 before_script:
   - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
 
+build:
+  stage: build
+  script:
+    - docker build --pull -t realtime_gateway .
+
 build and push non-master:
-  stage: build and push
+  stage: push
   except:
     - master
   script:
-    - docker build --pull -t realtime_gateway .
     - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
 
 build and push tags:
-  stage: build and push
+  stage: push
   only:
     - tags
   script:
-    - docker build --pull -t realtime_gateway .
     - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:$CI_BUILD_TAG"
     - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:latest"
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_TAG"
