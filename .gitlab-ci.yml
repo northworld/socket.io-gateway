@@ -8,12 +8,12 @@ before_script:
 build:
   stage: build
   script:
-    - docker build --pull -t realtime_gateway .
+    - docker build --pull -t "$CI_PROJECT_NAME" .
 
 push branches:
   stage: push
   script:
-    - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+    - docker tag "$CI_PROJECT_NAME" "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
 
 push tags:
@@ -21,7 +21,7 @@ push tags:
   only:
     - tags
   script:
-    - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:$CI_BUILD_TAG"
-    - docker tag realtime_gateway "$CI_REGISTRY_IMAGE:latest"
+    - docker tag "$CI_PROJECT_NAME" "$CI_REGISTRY_IMAGE:$CI_BUILD_TAG"
+    - docker tag "$CI_PROJECT_NAME" "$CI_REGISTRY_IMAGE:latest"
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_TAG"
     - docker push "$CI_REGISTRY_IMAGE:latest"
