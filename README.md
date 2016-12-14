@@ -1,4 +1,4 @@
-# Tomfit: Realtime gateway
+# Realtime gateway
 
 Development:
 
