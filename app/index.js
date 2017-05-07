@@ -3,7 +3,7 @@ var socketIo = require("socket.io");
 var uuid = require("node-uuid");
 
 var Connection = require("./connection");
-var connection = new Connection(process.env.REALTIME_GATEWAY_HOST, process.env.REALTIME_GATEWAY_PORT);
+var connection = new Connection(process.env.SOCKETIO_GATEWAY_HOST, process.env.SOCKETIO_GATEWAY_PORT);
 
 var clients = null;
 var server = null;
@@ -52,8 +52,8 @@ connection.on('connect', function() {
 
     // when a client connects, set up event listeners to forward everything to redis
     io.on("connect", function(socket) {
-
         var socketId = uuid.v1();
+        console.log("Client connected, " + socketId)
 
         clients[socketId] = socket;
 
@@ -90,10 +90,9 @@ connection.on('connect', function() {
 connection.on('message', function(info) {
 
     try {
-
-        //console.log("::" + message);
         //var info = JSON.parse(message);
         var recipient = info.client ? clients[info.client] : io;
+        console.log("Relay message: " + info.message + " (" + info.args + ")");
         recipient.emit.apply(recipient, [info.message].concat(info.args));
 
     }
