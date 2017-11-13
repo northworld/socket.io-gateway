@@ -1,0 +1,13 @@
+{
+  "name": "socket.io-gateway",
+  "version": "0.1",
+  "description": "Forward http API calls to persistent sockets.",
+  "main": "index.js",
+  "author": "Zoomer Analytics",
+  "license": "BSD",
+  "private": false,
+  "dependencies": {
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4"
+  }
+}

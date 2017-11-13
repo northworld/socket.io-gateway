@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Forwarder Log</title>
+  </head>
+  <body style="margin: 10px 10%;">
+    <h4>Forwarder message log</h4>
+    <ul id=event-list style="margin: 20px;">
+
+    </ul>
+  </body>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io('/admin');
+    var list = document.getElementById('event-list');
+    console.log(list);
+    socket.on('forward-message', (data) => {
+      console.log(data);
+      var li = document.createElement("li");
+      li.innerHTML = JSON.stringify(data);
+      list.appendChild(li);
+      console.log(list);
+    });
+
+    var myRoom = io();
+    myRoom.emit('join', 'my-test-room');
+    myRoom.on('echo', function(e) { console.log('my-test-room echo', e); });
+  </script>
+</html>
