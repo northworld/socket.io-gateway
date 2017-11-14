@@ -1,4 +1,4 @@
-FROM node:7.2.0
+FROM node:9.1
 
 RUN apt-get update && apt-get install -y unzip
 RUN wget https://releases.hashicorp.com/envconsul/0.7.2/envconsul_0.7.2_linux_amd64.zip\
@@ -7,4 +7,4 @@ RUN wget https://releases.hashicorp.com/envconsul/0.7.2/envconsul_0.7.2_linux_am
 
 COPY ./app /app
 WORKDIR /app
-RUN npm install
+RUN yarn
