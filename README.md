@@ -19,11 +19,11 @@
 
 ## Monitoring
 
-- There's a log available in `/message-log`
+- There's a log available in `/log`
 - There are stats with the timestamp for the last message for each room in `/stats`
 
-### Development
+### Docker
 
-- Build Docker image: `docker build -t realtime_gateway:dev .`
+A docker image is available:
 
-- Run `docker run -p 8080:8080 realtime_gateway:dev node index.js`
+- Run `docker run -d -p 5005:5005 zoomeranalytics/socket.io-gateway:1.0.1 node index.js`

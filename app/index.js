@@ -3,18 +3,17 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var port = process.env.SOCKETIO_GATEWAY_PORT || 8080;
+var port = process.env.SOCKETIO_GATEWAY_PORT || 5005;
 var clientIndex = 0;
 var clients = {};
-var rooms = {};
 var lastMsg = {};
 
 var adminIo = io.of('/admin');
 
 app.use(express.json());
-app.get('/', (req, res) => res.send('Hello World!'));
-app.get('/message-log', (req, res) => {
-  res.sendFile(__dirname + '/message_log.html');
+app.get('/', (req, res) => res.send('Debug Tools: <a href="/log">Log</a> and <a href="/stats">Stats</a>'));
+app.get('/log', (req, res) => {
+  res.sendFile(__dirname + '/log.html');
 });
 
 app.get('/stats', (req, res) => {
