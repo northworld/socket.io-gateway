@@ -1,11 +1,9 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(http, {pingTimeout: 10000, pingInterval: 5000});
 
 var port = process.env.SOCKETIO_GATEWAY_PORT || 5005;
-var clientIndex = 0;
-var clients = {};
 var lastMsg = {};
 
 var adminIo = io.of('/admin');
@@ -17,7 +15,9 @@ app.get('/log', (req, res) => {
 });
 
 app.get('/stats', (req, res) => {
-  res.json(lastMsg);
+  res.json({
+    lastMsg: lastMsg,
+  });
 });
 
 app.post('/events/:room/:event', (req, res) => {
@@ -36,12 +36,13 @@ app.post('/events/:room/:event', (req, res) => {
 
 io.on('connection', function(socket){
   console.log(`Socket ${socket.id} connected`);
-  clientId = clientIndex++;
-  clients[clientId] = socket;
 
   socket.on('disconnect', () => {
     console.log(`Socket ${socket.id} disconnected`);
-    delete clients[clientId];
+  });
+
+  socket.on('error', () => {
+    console.log(`Socket ${socket.id}: error`);
   });
 
   socket.on('join', (room) => {
