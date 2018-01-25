@@ -35,7 +35,7 @@ app.post('/events/:room/:event', (req, res) => {
 });
 
 io.on('connection', function(socket){
-  console.log(`Socket ${socket.id} connected`);
+  console.log(`Socket ${socket.id} connected from ${socket.request.connection.remoteAddress}`);
 
   socket.on('disconnect', () => {
     console.log(`Socket ${socket.id} disconnected`);
