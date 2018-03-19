@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http, {pingTimeout: 10000, pingInterval: 5000});
 
 var port = process.env.SOCKETIO_GATEWAY_PORT || 5005;
+var logMsgs = process.env.SOCKETIO_GATEWAY_LOG_MSGS || false;
 var lastMsg = {};
 
 var adminIo = io.of('/admin');
@@ -23,11 +24,17 @@ app.get('/stats', (req, res) => {
 app.post('/events/:room/:event', (req, res) => {
 
   io.to(req.params.room).emit(req.params.event, req.body);
-  adminIo.emit('forward-message', {
+  msg = {
     'room': req.params.room,
     'event': req.params.event,
     'content': req.body
-  });
+  };
+
+  adminIo.emit('forward-message', msg);
+
+  if (logMsgs) {
+    console.log(new Date().toISOString(), ' ', msg);
+  }
 
   lastMsg[req.params.room] = new Date().toISOString();
 
