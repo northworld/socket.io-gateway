@@ -4,6 +4,11 @@ const express = require('express');
 const app     = express();
 const http    = require('http');
 const https   = require('https');
+const sanitizeHtml = require('sanitize-html');
+ 
+
+
+
 
 const http_port = 80;
 const https_port = 443;
@@ -49,7 +54,7 @@ app.post('/events/:room/:event', (req, res) => {
   msg = {
     'room': req.params.room,
     'event': req.params.event,
-    'content': req.body
+    'content': sanitizeHtml(req.body)
   };
 
   adminIo.emit('forward-message', msg);
