@@ -4,10 +4,11 @@ const express       = require('express');
 const app           = express();
 const http          = require('http');
 const https         = require('https');
-  const sanitizeHtml  = require('sanitize-html');
+const sanitizeHtml  = require('sanitize-html');
  
 const logMsgs       = process.env.SOCKETIO_GATEWAY_LOG_MSGS || false;
 const useSSL        = process.env.USE_SSL || false;
+var httpsServer;
 
 if (useSSL) {
   const https_port = 443;
@@ -19,7 +20,7 @@ if (useSSL) {
     cert: certificate,
     ca: ca
   };
-  const httpsServer = https.createServer(credentials, app);
+  httpsServer = https.createServer(credentials, app);
   httpsServer.listen(https_port, function(){ console.log(`HTTPS Server Running on *:${https_port}`) });
 }
 
