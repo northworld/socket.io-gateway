@@ -1,38 +1,35 @@
 #!/usr/bin/env nodejs
-const fs      = require('fs');
-const express = require('express');
-const app     = express();
-const http    = require('http');
-const https   = require('https');
-const sanitizeHtml = require('sanitize-html');
+const fs            = require('fs');
+const express       = require('express');
+const app           = express();
+const http          = require('http');
+const https         = require('https');
+  const sanitizeHtml  = require('sanitize-html');
  
+const logMsgs       = process.env.SOCKETIO_GATEWAY_LOG_MSGS || false;
+const useSSL        = process.env.USE_SSL || false;
 
-
-
+if (useSSL) {
+  const https_port = 443;
+  const privateKey = fs.readFileSync('/etc/letsencrypt/live/sio.northworld.com/privkey.pem', 'utf8');
+  const certificate = fs.readFileSync('/etc/letsencrypt/live/sio.northworld.com/cert.pem', 'utf8');
+  const ca = fs.readFileSync('/etc/letsencrypt/live/sio.northworld.com/chain.pem', 'utf8');
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+  };
+  const httpsServer = https.createServer(credentials, app);
+  httpsServer.listen(https_port, function(){ console.log(`HTTPS Server Running on *:${https_port}`) });
+}
 
 const http_port = 80;
-const https_port = 443;
-const logMsgs = process.env.SOCKETIO_GATEWAY_LOG_MSGS || false;
-
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/sio.northworld.com/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/sio.northworld.com/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/sio.northworld.com/chain.pem', 'utf8');
-
-const credentials = {
-	key: privateKey,
-	cert: certificate,
-	ca: ca
-};
-
 const httpServer = http.createServer(app);
-const httpsServer = https.createServer(credentials, app);
-	
-httpsServer.listen(https_port, function(){ console.log(`HTTPS Server Running on *:${https_port}`) });
 httpServer.listen(http_port, function(){ console.log(`socket.io-gateway listening on *:${http_port}`); });
 
 var io = require('socket.io')({pingTimeout: 10000, pingInterval: 5000});
 io.attach(httpServer);
-io.attach(httpsServer);
+if (useSSL) { io.attach(httpsServer); }
 var adminIo = io.of('/admin');
 var lastMsg = {};
 
@@ -54,7 +51,7 @@ app.post('/events/:room/:event', (req, res) => {
   msg = {
     'room': req.params.room,
     'event': req.params.event,
-    'content': sanitizeHtml(req.body)
+    'content': sanitizeHtml(JSON.stringify(req.body),{allowedTags: [], disallowedTagsMode: 'escape'})   
   };
 
   adminIo.emit('forward-message', msg);
