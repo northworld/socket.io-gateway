@@ -52,7 +52,7 @@ app.post('/events/:room/:event', (req, res) => {
   var room = io.sockets.adapter.rooms[req.params.room]
   var room_count = room ? room.length : 0
   var msg_length = JSON.stringify(req.body).length;
-  var key_lengths = Object.keys(req.body).map(function(k) {return k + ": " + req.body[k].length});
+  var key_lengths = Object.keys(req.body).map(function(k) {return k + ": " + (req.body[k] ? req.body[k].length : 0)});
 
   msg = {
     'room': req.params.room,
