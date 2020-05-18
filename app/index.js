@@ -68,6 +68,7 @@ app.post('/events/:room/:event', (req, res) => {
 
   if (logMsgs) {
     console.log(new Date().toISOString(), ' ', msg);
+    console.log("raw ", req.body);
   }
 
   lastMsg[req.params.room] = new Date().toISOString();
