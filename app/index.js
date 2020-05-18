@@ -49,11 +49,20 @@ app.get('/stats', (req, res) => {
 app.post('/events/:room/:event', (req, res) => {
 
   io.to(req.params.room).emit(req.params.event, req.body);
+  var room = io.sockets.adapter.rooms[req.params.room]
+  var room_count = room ? room.length : 0
+  var msg_length = JSON.stringify(req.body).length;
+  var key_lengths = Object.keys(req.body).map(function(k) {return k + ": " + req.body[k].length});
+
   msg = {
     'room': req.params.room,
     'event': req.params.event,
-    'content': sanitizeHtml(JSON.stringify(req.body),{allowedTags: [], disallowedTagsMode: 'escape'})   
-  };
+    'room_count': room_count,
+    'key_length': key_lengths, 
+    "msg_length": msg_length,
+    'total_length': msg_length * room_count
+    }
+
 
   adminIo.emit('forward-message', msg);
 
