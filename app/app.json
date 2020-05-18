@@ -1,0 +1,20 @@
+{
+	"apps": [
+		{
+			"name"	: "socket-io-server",
+			"script" : "./index.js",
+			"watch" : "true",
+			"env": {
+				"USE_SSL" : "true"
+			},
+			"env_develop": {
+				"USER_SSL" : "false"
+			},
+			"env_test": {
+				"SOCKETIO_GATEWAY_LOG_MSGS" : "true"
+			}
+		}
+	]
+}
+
+
