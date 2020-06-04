@@ -94,7 +94,7 @@ io.on('connection', function(socket){
       if (k.includes('admin')) {return; }
       var roomobj = io.sockets.adapter.rooms[k]
       var count = roomobj ? roomobj.length - 1 : 0
-      io.to(k + "_admin").emit('refresh_admin', {'client_count': count});
+      io.to(k + "_ADMIN").emit('refresh_admin', {'client_count': count});
     });
   });
 
@@ -111,7 +111,7 @@ io.on('connection', function(socket){
     socket.join(room);
     var roomobj = io.sockets.adapter.rooms[room]
     var count = roomobj ? roomobj.length : 0
-    io.to(room + "_admin").emit('refresh_admin', {'client_count': count});
+    io.to(room + "_ADMIN").emit('refresh_admin', {'client_count': count});
   });
 });
 
