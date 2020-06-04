@@ -46,6 +46,14 @@ app.get('/stats', (req, res) => {
   });
 });
 
+app.get('/count/:room', (req, res) => {
+  var room = io.sockets.adapter.rooms[req.params.room]
+  var room_count = room ? room.length : 0
+  res.json({
+    count: room_count
+  });
+});
+
 app.post('/events/:room/:event', (req, res) => {
 
   io.to(req.params.room).emit(req.params.event, req.body);
@@ -79,6 +87,17 @@ app.post('/events/:room/:event', (req, res) => {
 io.on('connection', function(socket){
   console.log(`Socket ${socket.id} connected from ${socket.request.connection.remoteAddress}`);
 
+  socket.on('disconnecting', () => {
+
+    Object.keys(socket.rooms).forEach(function (k) {
+      if (k == socket.id) { return; }
+      if (k.includes('admin')) {return; }
+      var roomobj = io.sockets.adapter.rooms[k]
+      var count = roomobj ? roomobj.length - 1 : 0
+      io.to(k + "_admin").emit('refresh_admin', {'client_count': count});
+    });
+  });
+
   socket.on('disconnect', () => {
     console.log(`Socket ${socket.id} disconnected`);
   });
@@ -90,6 +109,9 @@ io.on('connection', function(socket){
   socket.on('join', (room) => {
     console.log(`Socket ${socket.id} joined room ${room}`);
     socket.join(room);
+    var roomobj = io.sockets.adapter.rooms[room]
+    var count = roomobj ? roomobj.length : 0
+    io.to(room + "_admin").emit('refresh_admin', {'client_count': count});
   });
 });
 

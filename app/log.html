@@ -25,5 +25,7 @@
     var myRoom = io();
     myRoom.emit('join', 'my-test-room');
     myRoom.on('echo', function(e) { console.log('my-test-room echo', e); });
+    myRoom.emit('join', 'my-test-room_admin');
+    myRoom.on('refresh_admin', function(e) { console.log('count', e); });
   </script>
 </html>
