@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -f ../app/static/acme-challenge/$CERTBOT_TOKEN
+rm -f /home/justin/socket.io-gateway/app/static/acme-challenge/$CERTBOT_TOKEN
