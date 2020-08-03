@@ -5,6 +5,7 @@ const app           = express();
 const http          = require('http');
 const https         = require('https');
 const sanitizeHtml  = require('sanitize-html');
+const path          = require('path');
  
 const logMsgs       = process.env.SOCKETIO_GATEWAY_LOG_MSGS || false;
 const useSSL        = process.env.USE_SSL || false;
@@ -35,6 +36,7 @@ var adminIo = io.of('/admin');
 var lastMsg = {};
 
 app.use(express.json());
+app.use('/.wellknown', express.static(path.join(__dirname, 'static')))
 app.get('/', (req, res) => res.send('Debug Tools: <a href="/log">Log</a> and <a href="/stats">Stats</a>'));
 app.get('/log', (req, res) => {
   res.sendFile(__dirname + '/log.html');
