@@ -35,7 +35,7 @@ if (useSSL) { io.attach(httpsServer); }
 var adminIo = io.of('/admin');
 var lastMsg = {};
 
-app.use(express.json());
+app.use(express.json({ limit: 1000000 }));
 app.use('/.well-known', express.static(path.join(__dirname, 'static')))
 app.get('/', (req, res) => res.send('Debug Tools: <a href="/log">Log</a> and <a href="/stats">Stats</a>'));
 app.get('/log', (req, res) => {
